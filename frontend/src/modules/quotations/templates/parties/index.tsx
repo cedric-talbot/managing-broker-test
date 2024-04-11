@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useState } from "react";
+import React, { ReactElement, useCallback, useState } from "react";
 import {
   Alert,
   Autocomplete,
@@ -27,6 +27,7 @@ export interface Broker {
 export const Parties = (): ReactElement => {
   const [search, setSearch] = useState("");
   const [selectedBroker, setSelectedBroker] = useState<Broker | null>(null);
+  const [autocompleteFocus, setAutocompleteFocus] = useState(false);
   const [open, setOpen] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
 
@@ -37,7 +38,11 @@ export const Parties = (): ReactElement => {
     return res.data;
   }, [search]);
 
-  const { data, isError, isLoading } = useQuery<Broker[]>(["brokers", debouncedSearch], getBrokers);
+  const { data, isError, isLoading } = useQuery<Broker[]>({
+    queryKey: ["brokers", debouncedSearch],
+    queryFn: getBrokers,
+    enabled: !!debouncedSearch,
+  });
 
   const mutation = useMutation({
     mutationFn: (newBroker: Broker) => {
@@ -105,7 +110,7 @@ export const Parties = (): ReactElement => {
               return options;
             }}
             renderOption={(props, option) => (
-              <>
+              <React.Fragment key={typeof option === "string" ? option : option.name}>
                 <li {...props}>
                   <Box sx={{ width: "100%" }}>
                     {typeof option === "string" ? (
@@ -118,8 +123,11 @@ export const Parties = (): ReactElement => {
                   </Box>
                 </li>
                 {typeof option !== "string" && <Divider />}
-              </>
+              </React.Fragment>
             )}
+            onFocus={() => setAutocompleteFocus(true)}
+            onBlur={() => setAutocompleteFocus(false)}
+            open={!!debouncedSearch && !!search && selectedBroker === null && autocompleteFocus}
           />
           {isError && (
             <Alert severity="error" sx={{ marginTop: "20px" }}>
