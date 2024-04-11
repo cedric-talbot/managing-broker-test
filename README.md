@@ -12,11 +12,6 @@ The backend has been build with the objective of being as simplistic as possible
   "address": string;
   "city": string;
   "country": string;
-  "contact"?: {
-    "name": string;
-    "email": string;
-  };
-  "commission"?: number;
 }
 ```
 
