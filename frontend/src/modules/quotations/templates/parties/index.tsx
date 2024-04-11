@@ -12,6 +12,7 @@ import {
 import { useMutation, useQuery } from "react-query";
 import styled from "@emotion/styled";
 import axios from "axios";
+import { Search } from "@mui/icons-material";
 
 import { Card } from "../../../../components/Card/Card";
 import { AddBrokerDialog } from "./AddBrokerDialog";
@@ -73,6 +74,10 @@ export const Parties = (): ReactElement => {
               }
               setSelectedBroker(newValue);
               setSearch(newValue?.name || "");
+            }}
+            popupIcon={selectedBroker === null ? <Search /> : null}
+            sx={{
+              "& .MuiAutocomplete-popupIndicator": { transform: "none" },
             }}
             disablePortal
             id="parties-broker-selector"
