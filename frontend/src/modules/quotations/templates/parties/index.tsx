@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useState } from "react";
-import { Autocomplete, InputAdornment, TextField, Typography } from "@mui/material";
+import { Alert, Autocomplete, CircularProgress, InputAdornment, TextField, Typography } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import styled from "@emotion/styled";
 import axios from "axios";
@@ -27,13 +27,13 @@ export const Parties = (): ReactElement => {
   const debouncedSearch = useDebounce(search, 400);
 
   const getBrokers = useCallback(async () => {
-    const res = await fetch(
+    const res = await axios.get(
       process.env.REACT_APP_BROKER_API_HOST + "/brokers" + (search !== "" ? `?search=${search}` : "")
     );
-    return res.json();
+    return res.data;
   }, [search]);
 
-  const { data, error, isLoading } = useQuery<Broker[]>(["brokers", debouncedSearch], getBrokers);
+  const { data, isError, isLoading } = useQuery<Broker[]>(["brokers", debouncedSearch], getBrokers);
 
   const mutation = useMutation({
     mutationFn: (newBroker: Broker) => {
@@ -69,6 +69,7 @@ export const Parties = (): ReactElement => {
             noOptionsText={null}
             id="parties-broker-selector"
             options={data || []}
+            loading={isLoading}
             inputValue={selectedBroker?.name || search}
             onInputChange={(event, value, reason) => {
               if (reason !== "reset") {
@@ -80,13 +81,32 @@ export const Parties = (): ReactElement => {
                 ? option
                 : `${option.name} - ${option.address} - ${option.city} - ${option.country}`
             }
-            renderInput={(params) => <TextField {...params} label="Name" />}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Name"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {isLoading ? <CircularProgress size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
             filterOptions={(options) => {
-              options.push("or Add manually");
+              if (!(isLoading || isError)) options.push("or Add manually");
               // Filtering is handled on the backend side
               return options;
             }}
           />
+          {isError && (
+            <Alert severity="error" sx={{ marginTop: "20px" }}>
+              Something went wrong while retrieving the brokers
+            </Alert>
+          )}
           {selectedBroker !== null && (
             <>
               <DataItem>
