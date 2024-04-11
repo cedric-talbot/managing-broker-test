@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { ReactElement } from "react";
+
 import { Broker } from ".";
+import { useTranslation } from "react-i18next";
 
 interface AddBrokerDialogProps {
   open: boolean;
@@ -10,6 +12,8 @@ interface AddBrokerDialogProps {
 }
 
 export const AddBrokerDialog = ({ open, handleClose, handleSubmit }: AddBrokerDialogProps): ReactElement => {
+  const { t } = useTranslation("partiesPage");
+
   return (
     <Dialog
       open={open}
@@ -25,28 +29,28 @@ export const AddBrokerDialog = ({ open, handleClose, handleSubmit }: AddBrokerDi
         },
       }}
     >
-      <DialogTitle>Add manually</DialogTitle>
+      <DialogTitle>{t("MANAGING_BROKER_ADD_BROKER_DIALOG_TITLE")}</DialogTitle>
 
       <DialogContent>
         <TextFieldContainer>
-          <TextField fullWidth required label="Legal name" name="name" />
+          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_NAME")} name="name" />
         </TextFieldContainer>
         <TextFieldContainer>
-          <TextField fullWidth required label="Address" name="address" />
+          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_ADDRESS")} name="address" />
         </TextFieldContainer>
         <TextFieldContainer>
-          <TextField fullWidth required label="City" name="city" />
+          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_CITY")} name="city" />
         </TextFieldContainer>
         <TextFieldContainer>
-          <TextField fullWidth required label="Country" name="country" />
+          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_COUNTRY")} name="country" />
         </TextFieldContainer>
       </DialogContent>
       <DialogActions sx={{ padding: "8px 24px 24px" }}>
         <Button onClick={handleClose} color="secondary">
-          Cancel
+          {t("MANAGING_BROKER_ADD_BROKER_DIALOG_CANCEL_BUTTON")}
         </Button>
         <Button variant="contained" type="submit" color="primary">
-          Save
+          {t("MANAGING_BROKER_ADD_BROKER_DIALOG_SUBMIT_BUTTON")}
         </Button>
       </DialogActions>
     </Dialog>
