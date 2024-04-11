@@ -30,6 +30,53 @@ app.get('/brokers', (req, res) => {
   });
 });
 
+app.post('/brokers', (req, res) => {
+  try {
+    const brokersData = JSON.parse(readFileSync("./data/brokers.json").toString());
+    let id = 1;
+    if (brokersData.brokers.length > 0) {
+      id = brokersData.brokers[brokersData.brokers.length - 1].id + 1;
+    }
+
+    const newBroker = {
+      id,
+      name: req.body.name,
+      address: req.body.address,
+      city: req.body.city,
+      country: req.body.country,
+      contact: req.body.contact ? {
+        name: req.body.contact.name,
+        email: req.body.contact.email
+      } : undefined,
+      commission: req.body.commission
+    };
+
+    if (newBroker.name === undefined || newBroker.name === "") {
+      res.status(400).send("The 'name' field is incorrect.")
+      return
+    };
+    if (newBroker.address === undefined || newBroker.address === "") {
+      res.status(400).send("The 'address' field is incorrect.")
+      return
+    };
+    if (newBroker.city === undefined || newBroker.city === "") {
+      res.status(400).send("The 'city' field is incorrect.")
+      return
+    };
+    if (newBroker.country === undefined || newBroker.country === "") {
+      res.status(400).send("The 'country' field is incorrect.")
+      return
+    };
+
+    brokersData.brokers.push(newBroker);
+    writeFileSync("./data/brokers.json", JSON.stringify(brokersData));
+    res.status(201).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong.");
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
