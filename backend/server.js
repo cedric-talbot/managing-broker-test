@@ -43,12 +43,7 @@ app.post('/brokers', (req, res) => {
       name: req.body.name,
       address: req.body.address,
       city: req.body.city,
-      country: req.body.country,
-      contact: req.body.contact ? {
-        name: req.body.contact.name,
-        email: req.body.contact.email
-      } : undefined,
-      commission: req.body.commission
+      country: req.body.country
     };
 
     if (newBroker.name === undefined || newBroker.name === "") {
