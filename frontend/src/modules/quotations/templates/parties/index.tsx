@@ -17,6 +17,7 @@ import { Search } from "@mui/icons-material";
 import { Card } from "../../../../components/Card/Card";
 import { AddBrokerDialog } from "./AddBrokerDialog";
 import { useDebounce } from "../../../../hooks/useDebounce";
+import { useTranslation } from "react-i18next";
 
 export interface Broker {
   name: string;
@@ -31,6 +32,8 @@ export const Parties = (): ReactElement => {
   const [autocompleteFocus, setAutocompleteFocus] = useState(false);
   const [open, setOpen] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
+
+  const { t } = useTranslation("partiesPage");
 
   const getBrokers = useCallback(async () => {
     const res = await axios.get(
@@ -63,7 +66,7 @@ export const Parties = (): ReactElement => {
 
   return (
     <Container>
-      <Card title="Managing broker" subTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit">
+      <Card title={t("MANAGING_BROKER_CARD_TITLE")} subTitle={t("MANAGING_BROKER_CARD_SUBTITLE")}>
         <>
           <Autocomplete<Broker | string>
             value={selectedBroker}
@@ -97,7 +100,7 @@ export const Parties = (): ReactElement => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Name"
+                label={t("MANAGING_BROKER_AUTOCOMPLETE_LABEL")}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -120,7 +123,8 @@ export const Parties = (): ReactElement => {
                   <Box sx={{ width: "100%" }}>
                     {typeof option === "string" ? (
                       <>
-                        Or <u>Add manually</u>
+                        {t("MANAGING_BROKER_AUTOCOMPLETE_ADD_TEXT") + " "}
+                        <u>{t("MANAGING_BROKER_AUTOCOMPLETE_ADD_TEXT_UNDERLINED")}</u>
                       </>
                     ) : (
                       `${option.name} - ${option.address} - ${option.city} - ${option.country}`
@@ -136,14 +140,14 @@ export const Parties = (): ReactElement => {
           />
           {isError && (
             <Alert severity="error" sx={{ marginTop: "20px" }}>
-              Something went wrong while retrieving the brokers
+              {t("MANAGING_BROKER_RETRIEVING_ERROR_MESSAGE")}
             </Alert>
           )}
           {selectedBroker !== null && (
             <>
               <DataItem>
                 <Typography variant="caption" fontFamily="Montserrat" color="secondary">
-                  Address
+                  {t("MANAGING_BROKER_ADDRESS")}
                 </Typography>
                 <Typography variant="body2" fontFamily="Montserrat">
                   {selectedBroker.address + " - " + selectedBroker.city}
@@ -151,18 +155,18 @@ export const Parties = (): ReactElement => {
               </DataItem>
               <DataItem>
                 <Typography variant="caption" fontFamily="Montserrat" color="secondary">
-                  Country
+                  {t("MANAGING_BROKER_COUNTRY")}
                 </Typography>
                 <Typography variant="body2" fontFamily="Montserrat">
                   {selectedBroker.country}
                 </Typography>
               </DataItem>
               <DataItem>
-                <TextField label="Contact" fullWidth />
+                <TextField label={t("MANAGING_BROKER_CONTACT")} fullWidth />
               </DataItem>
               <DataItem>
                 <TextField
-                  label="Commission"
+                  label={t("MANAGING_BROKER_COMMISSION")}
                   fullWidth
                   InputProps={{
                     endAdornment: <InputAdornment position="end">%</InputAdornment>,
