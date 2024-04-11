@@ -1,5 +1,14 @@
 import { ReactElement, useCallback, useState } from "react";
-import { Alert, Autocomplete, CircularProgress, InputAdornment, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Autocomplete,
+  Box,
+  CircularProgress,
+  Divider,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import styled from "@emotion/styled";
 import axios from "axios";
@@ -61,7 +70,6 @@ export const Parties = (): ReactElement => {
               setSearch(newValue?.name || "");
             }}
             disablePortal
-            noOptionsText={null}
             id="parties-broker-selector"
             options={data || []}
             loading={isLoading}
@@ -92,10 +100,26 @@ export const Parties = (): ReactElement => {
               />
             )}
             filterOptions={(options) => {
-              if (!(isLoading || isError)) options.push("or Add manually");
+              if (!(isLoading || isError)) options.push("Add");
               // Filtering is handled on the backend side
               return options;
             }}
+            renderOption={(props, option) => (
+              <>
+                <li {...props}>
+                  <Box sx={{ width: "100%" }}>
+                    {typeof option === "string" ? (
+                      <>
+                        Or <u>Add manually</u>
+                      </>
+                    ) : (
+                      `${option.name} - ${option.address} - ${option.city} - ${option.country}`
+                    )}
+                  </Box>
+                </li>
+                {typeof option !== "string" && <Divider />}
+              </>
+            )}
           />
           {isError && (
             <Alert severity="error" sx={{ marginTop: "20px" }}>
