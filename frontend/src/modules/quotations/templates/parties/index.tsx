@@ -25,7 +25,9 @@ export const Parties = (): ReactElement => {
   const [open, setOpen] = useState(false);
 
   const getBrokers = useCallback(async () => {
-    const res = await fetch("http://localhost:4242/brokers" + (search !== "" ? `?search=${search}` : ""));
+    const res = await fetch(
+      process.env.REACT_APP_BROKER_API_HOST + "/brokers" + (search !== "" ? `?search=${search}` : "")
+    );
     return res.json();
   }, [search]);
 
@@ -33,7 +35,7 @@ export const Parties = (): ReactElement => {
 
   const mutation = useMutation({
     mutationFn: (newBroker: Broker) => {
-      return axios.post("http://localhost:4242/brokers", newBroker);
+      return axios.post(process.env.REACT_APP_BROKER_API_HOST + "/brokers", newBroker);
     },
   });
 
