@@ -41,11 +41,11 @@ export const AddBrokerDialog = ({ open, handleClose, handleSubmit }: AddBrokerDi
           <TextField fullWidth required label="Country" name="country" />
         </TextFieldContainer>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} sx={{ color: "#757575" }}>
+      <DialogActions sx={{ padding: "8px 24px 24px" }}>
+        <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
-        <Button variant="contained" type="submit" sx={{ backgroundColor: "#26bad4" }}>
+        <Button variant="contained" type="submit" color="primary">
           Save
         </Button>
       </DialogActions>

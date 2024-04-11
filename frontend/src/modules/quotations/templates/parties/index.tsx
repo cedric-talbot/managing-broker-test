@@ -77,7 +77,7 @@ export const Parties = (): ReactElement => {
                 : `${option.name} - ${option.address} - ${option.city} - ${option.country}`
             }
             renderInput={(params) => <TextField {...params} label="Name" />}
-            filterOptions={(options, params) => {
+            filterOptions={(options) => {
               options.push("or Add manually");
               // Filtering is handled on the backend side
               return options;
@@ -86,7 +86,7 @@ export const Parties = (): ReactElement => {
           {selectedBroker !== null && (
             <>
               <DataItem>
-                <Typography variant="caption" fontFamily="Montserrat">
+                <Typography variant="caption" fontFamily="Montserrat" color="secondary">
                   Address
                 </Typography>
                 <Typography variant="body2" fontFamily="Montserrat">
@@ -94,7 +94,7 @@ export const Parties = (): ReactElement => {
                 </Typography>
               </DataItem>
               <DataItem>
-                <Typography variant="caption" fontFamily="Montserrat">
+                <Typography variant="caption" fontFamily="Montserrat" color="secondary">
                   Country
                 </Typography>
                 <Typography variant="body2" fontFamily="Montserrat">
