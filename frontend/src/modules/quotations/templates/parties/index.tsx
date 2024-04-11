@@ -6,6 +6,7 @@ import axios from "axios";
 
 import { Card } from "../../../../components/Card/Card";
 import { AddBrokerDialog } from "./AddBrokerDialog";
+import { useDebounce } from "../../../../hooks/useDebounce";
 
 export interface Broker {
   name: string;
@@ -23,6 +24,7 @@ export const Parties = (): ReactElement => {
   const [search, setSearch] = useState("");
   const [selectedBroker, setSelectedBroker] = useState<Broker | null>(null);
   const [open, setOpen] = useState(false);
+  const debouncedSearch = useDebounce(search, 400);
 
   const getBrokers = useCallback(async () => {
     const res = await fetch(
@@ -31,7 +33,7 @@ export const Parties = (): ReactElement => {
     return res.json();
   }, [search]);
 
-  const { data, error, isLoading } = useQuery<Broker[]>(["brokers", search], getBrokers);
+  const { data, error, isLoading } = useQuery<Broker[]>(["brokers", debouncedSearch], getBrokers);
 
   const mutation = useMutation({
     mutationFn: (newBroker: Broker) => {
