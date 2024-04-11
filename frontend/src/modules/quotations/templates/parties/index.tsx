@@ -1,8 +1,18 @@
-import { ReactElement, useCallback, useState } from "react";
-import { Alert, Autocomplete, CircularProgress, InputAdornment, TextField, Typography } from "@mui/material";
+import React, { ReactElement, useCallback, useState } from "react";
+import {
+  Alert,
+  Autocomplete,
+  Box,
+  CircularProgress,
+  Divider,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import styled from "@emotion/styled";
 import axios from "axios";
+import { Search } from "@mui/icons-material";
 
 import { Card } from "../../../../components/Card/Card";
 import { AddBrokerDialog } from "./AddBrokerDialog";
@@ -18,6 +28,7 @@ export interface Broker {
 export const Parties = (): ReactElement => {
   const [search, setSearch] = useState("");
   const [selectedBroker, setSelectedBroker] = useState<Broker | null>(null);
+  const [autocompleteFocus, setAutocompleteFocus] = useState(false);
   const [open, setOpen] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
 
@@ -28,7 +39,11 @@ export const Parties = (): ReactElement => {
     return res.data;
   }, [search]);
 
-  const { data, isError, isLoading } = useQuery<Broker[]>(["brokers", debouncedSearch], getBrokers);
+  const { data, isError, isLoading } = useQuery<Broker[]>({
+    queryKey: ["brokers", debouncedSearch],
+    queryFn: getBrokers,
+    enabled: !!debouncedSearch,
+  });
 
   const mutation = useMutation({
     mutationFn: (newBroker: Broker) => {
@@ -60,8 +75,11 @@ export const Parties = (): ReactElement => {
               setSelectedBroker(newValue);
               setSearch(newValue?.name || "");
             }}
+            popupIcon={selectedBroker === null ? <Search /> : null}
+            sx={{
+              "& .MuiAutocomplete-popupIndicator": { transform: "none" },
+            }}
             disablePortal
-            noOptionsText={null}
             id="parties-broker-selector"
             options={data || []}
             loading={isLoading}
@@ -92,10 +110,29 @@ export const Parties = (): ReactElement => {
               />
             )}
             filterOptions={(options) => {
-              if (!(isLoading || isError)) options.push("or Add manually");
+              if (!(isLoading || isError)) options.push("Add");
               // Filtering is handled on the backend side
               return options;
             }}
+            renderOption={(props, option) => (
+              <React.Fragment key={typeof option === "string" ? option : option.name}>
+                <li {...props}>
+                  <Box sx={{ width: "100%" }}>
+                    {typeof option === "string" ? (
+                      <>
+                        Or <u>Add manually</u>
+                      </>
+                    ) : (
+                      `${option.name} - ${option.address} - ${option.city} - ${option.country}`
+                    )}
+                  </Box>
+                </li>
+                {typeof option !== "string" && <Divider />}
+              </React.Fragment>
+            )}
+            onFocus={() => setAutocompleteFocus(true)}
+            onBlur={() => setAutocompleteFocus(false)}
+            open={!!debouncedSearch && !!search && selectedBroker === null && autocompleteFocus}
           />
           {isError && (
             <Alert severity="error" sx={{ marginTop: "20px" }}>
