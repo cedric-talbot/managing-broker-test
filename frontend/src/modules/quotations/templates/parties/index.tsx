@@ -13,11 +13,6 @@ export interface Broker {
   address: string;
   city: string;
   country: string;
-  contact?: {
-    name: string;
-    email: string;
-  };
-  commission?: number;
 }
 
 export const Parties = (): ReactElement => {
@@ -126,11 +121,10 @@ export const Parties = (): ReactElement => {
                 </Typography>
               </DataItem>
               <DataItem>
-                <TextField defaultValue={selectedBroker.contact?.name} label="Contact" fullWidth />
+                <TextField label="Contact" fullWidth />
               </DataItem>
               <DataItem>
                 <TextField
-                  defaultValue={selectedBroker.commission}
                   label="Commission"
                   fullWidth
                   InputProps={{
