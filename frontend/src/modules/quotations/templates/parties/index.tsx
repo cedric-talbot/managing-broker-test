@@ -1,9 +1,11 @@
 import { ReactElement, useCallback, useState } from "react";
 import { Autocomplete, InputAdornment, TextField, Typography } from "@mui/material";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import styled from "@emotion/styled";
+import axios from "axios";
 
 import { Card } from "../../../../components/Card/Card";
+import { AddBrokerDialog } from "./AddBrokerDialog";
 
 export interface Broker {
   name: string;
@@ -20,6 +22,7 @@ export interface Broker {
 export const Parties = (): ReactElement => {
   const [search, setSearch] = useState("");
   const [selectedBroker, setSelectedBroker] = useState<Broker | null>(null);
+  const [open, setOpen] = useState(false);
 
   const getBrokers = useCallback(async () => {
     const res = await fetch("http://localhost:4242/brokers" + (search !== "" ? `?search=${search}` : ""));
@@ -28,13 +31,33 @@ export const Parties = (): ReactElement => {
 
   const { data, error, isLoading } = useQuery<Broker[]>(["brokers", search], getBrokers);
 
+  const mutation = useMutation({
+    mutationFn: (newBroker: Broker) => {
+      return axios.post("http://localhost:4242/brokers", newBroker);
+    },
+  });
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = (newBroker: Broker) => {
+    mutation.mutate(newBroker);
+    setSelectedBroker(newBroker);
+    setOpen(false);
+  };
+
   return (
     <Container>
       <Card title="Managing broker" subTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit">
         <>
-          <Autocomplete
+          <Autocomplete<Broker | string>
             value={selectedBroker}
             onChange={(event, newValue) => {
+              if (typeof newValue === "string") {
+                setOpen(true);
+                return;
+              }
               setSelectedBroker(newValue);
               setSearch(newValue?.name || "");
             }}
@@ -48,9 +71,14 @@ export const Parties = (): ReactElement => {
                 setSearch(value);
               }
             }}
-            getOptionLabel={(option) => `${option.name} - ${option.address} - ${option.city} - ${option.country}`}
+            getOptionLabel={(option) =>
+              typeof option === "string"
+                ? option
+                : `${option.name} - ${option.address} - ${option.city} - ${option.country}`
+            }
             renderInput={(params) => <TextField {...params} label="Name" />}
-            filterOptions={(options) => {
+            filterOptions={(options, params) => {
+              options.push("or Add manually");
               // Filtering is handled on the backend side
               return options;
             }}
@@ -90,6 +118,7 @@ export const Parties = (): ReactElement => {
           )}
         </>
       </Card>
+      <AddBrokerDialog open={open} handleClose={handleClose} handleSubmit={handleSubmit} />
     </Container>
   );
 };
