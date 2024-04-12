@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Autocomplete,
@@ -13,11 +13,12 @@ import { useMutation, useQuery } from "react-query";
 import styled from "@emotion/styled";
 import axios from "axios";
 import { Search } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import useInfiniteScroll from "react-infinite-scroll-hook";
 
 import { Card } from "../../../../components/Card/Card";
 import { AddBrokerDialog } from "./AddBrokerDialog";
 import { useDebounce } from "../../../../hooks/useDebounce";
-import { useTranslation } from "react-i18next";
 
 export interface Broker {
   name: string;
@@ -26,27 +27,51 @@ export interface Broker {
   country: string;
 }
 
+interface BrokersResponse {
+  brokers: Broker[];
+  hasNext: boolean;
+}
+
+// This value is set deliberately low to allow demonstrating the infinite scroll
+const limit = 12;
+
 export const Parties = (): ReactElement => {
   const [search, setSearch] = useState("");
   const [selectedBroker, setSelectedBroker] = useState<Broker | null>(null);
   const [autocompleteFocus, setAutocompleteFocus] = useState(false);
+  const [brokers, setBrokers] = useState<Broker[]>([]);
+  const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
-  const debouncedSearch = useDebounce(search, 400);
+  // We want to reset the page whenever we change our search
+  const debouncedSearch = useDebounce(search, 400, () => {
+    setPage(1);
+  });
 
   const { t } = useTranslation("partiesPage");
 
   const getBrokers = useCallback(async () => {
     const res = await axios.get(
-      process.env.REACT_APP_BROKER_API_HOST + "/brokers" + (search !== "" ? `?search=${search}` : "")
+      process.env.REACT_APP_BROKER_API_HOST +
+        "/brokers" +
+        (search !== "" ? `?search=${search}&page=${page}&limit=${limit}` : "")
     );
-    return res.data.brokers;
-  }, [search]);
+    return { brokers: res.data.data.brokers, hasNext: res.data.next !== undefined };
+  }, [search, page]);
 
-  const { data, isError, isLoading } = useQuery<Broker[]>({
-    queryKey: ["brokers", debouncedSearch],
+  const { data, isError, isLoading } = useQuery<BrokersResponse>({
+    queryKey: ["brokers", debouncedSearch, page],
     queryFn: getBrokers,
     enabled: !!debouncedSearch,
   });
+
+  useEffect(() => {
+    if (data === undefined) return;
+    if (page === 1) {
+      setBrokers(data.brokers);
+    } else {
+      setBrokers((currentBrokers) => currentBrokers.concat(data.brokers));
+    }
+  }, [data?.brokers]);
 
   const mutation = useMutation({
     mutationFn: (newBroker: Broker) => {
@@ -63,6 +88,13 @@ export const Parties = (): ReactElement => {
     setSelectedBroker(newBroker);
     setOpen(false);
   };
+
+  const [sentryRef] = useInfiniteScroll({
+    loading: isLoading,
+    hasNextPage: !!data?.hasNext,
+    onLoadMore: () => setPage((prev) => prev + 1),
+    disabled: !!isError,
+  });
 
   return (
     <Container>
@@ -84,7 +116,7 @@ export const Parties = (): ReactElement => {
             }}
             disablePortal
             id="parties-broker-selector"
-            options={data || []}
+            options={brokers}
             loading={isLoading}
             inputValue={selectedBroker?.name || search}
             onInputChange={(event, value, reason) => {
@@ -119,7 +151,7 @@ export const Parties = (): ReactElement => {
             }}
             renderOption={(props, option) => (
               <React.Fragment key={typeof option === "string" ? option : option.name}>
-                <li {...props}>
+                <li {...props} ref={typeof option === "string" ? sentryRef : undefined}>
                   <Box sx={{ width: "100%" }}>
                     {typeof option === "string" ? (
                       <>

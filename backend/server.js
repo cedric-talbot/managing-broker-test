@@ -13,6 +13,8 @@ app.use((req, res, next) => {
 
 app.get('/brokers', (req, res) => {
   const search = req.query.search;
+  const page = req.query.page;
+  const limit = req.query.limit;
   readFile("./data/brokers.json", 'utf8', (err, data) => {
     if (err !== null) {
       console.error(err);
@@ -20,13 +22,20 @@ app.get('/brokers', (req, res) => {
       return
     }
     const brokersData = JSON.parse(data);
-    res.status(200).send({brokers: brokersData.brokers.filter((broker) =>
+    const filteredBrokers = brokersData.brokers.filter((broker) =>
       search === undefined ||
-      broker.name.toLowerCase().includes(search) ||
-      broker.address.toLowerCase().includes(search) ||
-      broker.city.toLowerCase().includes(search) ||
-      broker.country.toLowerCase().includes(search)
-    )});
+      broker.name.toLowerCase().includes(search.toLowerCase()) ||
+      broker.address.toLowerCase().includes(search.toLowerCase()) ||
+      broker.city.toLowerCase().includes(search.toLowerCase()) ||
+      broker.country.toLowerCase().includes(search.toLowerCase())
+    );
+
+    res.status(200).send({
+      data: {
+        brokers: filteredBrokers.filter((_, index) => index >= (page - 1) * limit && index < page * limit)
+      },
+      next: filteredBrokers.length > page * limit ? `/brokers?search=${search}&page=${parseInt(page)+1}&limit=${limit}` : undefined
+    });
   });
 });
 
