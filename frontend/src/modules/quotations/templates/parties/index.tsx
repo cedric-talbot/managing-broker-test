@@ -170,7 +170,7 @@ export const Parties = (): ReactElement => {
             )}
             onFocus={() => setAutocompleteFocus(true)}
             onBlur={() => setAutocompleteFocus(false)}
-            open={!!debouncedSearch && !!search && selectedBroker === null && autocompleteFocus}
+            open={!!debouncedSearch && !!search && selectedBroker === null && autocompleteFocus && !isError}
             isOptionEqualToValue={(option, value) =>
               typeof option === "string" || typeof value === "string" ? option === value : option.id === value.id
             }
@@ -221,7 +221,6 @@ export const Parties = (): ReactElement => {
 
 const Container = styled.div`
   width: 50%;
-  position: absolute;
 `;
 
 const DataItem = styled.div`
