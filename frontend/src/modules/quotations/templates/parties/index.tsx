@@ -21,6 +21,7 @@ import { AddBrokerDialog } from "./AddBrokerDialog";
 import { useDebounce } from "../../../../hooks/useDebounce";
 
 export interface Broker {
+  id: number;
   name: string;
   address: string;
   city: string;
@@ -86,6 +87,7 @@ export const Parties = (): ReactElement => {
   const handleSubmit = (newBroker: Broker) => {
     mutation.mutate(newBroker);
     setSelectedBroker(newBroker);
+    setBrokers((currentBrokers) => currentBrokers.concat(newBroker));
     setOpen(false);
   };
 
@@ -169,6 +171,9 @@ export const Parties = (): ReactElement => {
             onFocus={() => setAutocompleteFocus(true)}
             onBlur={() => setAutocompleteFocus(false)}
             open={!!debouncedSearch && !!search && selectedBroker === null && autocompleteFocus}
+            isOptionEqualToValue={(option, value) =>
+              typeof option === "string" || typeof value === "string" ? option === value : option.id === value.id
+            }
           />
           {isError && (
             <Alert severity="error" sx={{ marginTop: "20px" }}>
