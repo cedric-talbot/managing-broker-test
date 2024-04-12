@@ -20,13 +20,13 @@ app.get('/brokers', (req, res) => {
       return
     }
     const brokersData = JSON.parse(data);
-    res.status(200).send(brokersData.brokers.filter((broker) =>
+    res.status(200).send({brokers: brokersData.brokers.filter((broker) =>
       search === undefined ||
       broker.name.toLowerCase().includes(search) ||
       broker.address.toLowerCase().includes(search) ||
       broker.city.toLowerCase().includes(search) ||
       broker.country.toLowerCase().includes(search)
-    ));
+    )});
   });
 });
 
