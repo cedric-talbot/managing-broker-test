@@ -13,7 +13,7 @@ describe("Parties should work correctly", () => {
   it("should display the retrieved brokers when the user inputs a value", () => {
     cy.intercept("GET", "**/brokers?search=rob&page=1&limit=12", {
       data: {
-        brokers:[
+        brokers: [
           {
             id: 1,
             name: "RobCo Industries",
@@ -21,8 +21,8 @@ describe("Parties should work correctly", () => {
             city: "Paris",
             country: "France",
           },
-        ]
-      }
+        ],
+      },
     });
     cy.get("#parties-broker-selector").click().type("rob");
     cy.wait(1000);
@@ -49,7 +49,7 @@ describe("Parties should work correctly", () => {
   it("should display an option to add a broker", () => {
     cy.intercept("GET", "**/brokers?search=rob&page=1&limit=12", {
       data: {
-        brokers:[
+        brokers: [
           {
             id: 1,
             name: "RobCo Industries",
@@ -57,8 +57,8 @@ describe("Parties should work correctly", () => {
             city: "Paris",
             country: "France",
           },
-        ]
-      }
+        ],
+      },
     });
     cy.get("#parties-broker-selector").click().type("rob");
     cy.wait(1000);
