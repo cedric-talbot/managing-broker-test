@@ -39,7 +39,7 @@ export const Parties = (): ReactElement => {
     const res = await axios.get(
       process.env.REACT_APP_BROKER_API_HOST + "/brokers" + (search !== "" ? `?search=${search}` : "")
     );
-    return res.data;
+    return res.data.brokers;
   }, [search]);
 
   const { data, isError, isLoading } = useQuery<Broker[]>({
