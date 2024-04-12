@@ -60,6 +60,7 @@ export const Parties = (): ReactElement => {
   }, [search, page]);
 
   const { data, isError, isLoading } = useQuery<BrokersResponse>({
+    // We query data whenever the search or the page changes
     queryKey: ["brokers", debouncedSearch, page],
     queryFn: getBrokers,
     enabled: !!debouncedSearch,
@@ -94,6 +95,7 @@ export const Parties = (): ReactElement => {
   const [sentryRef] = useInfiniteScroll({
     loading: isLoading,
     hasNextPage: !!data?.hasNext,
+    // Updating the page will trigger a new query
     onLoadMore: () => setPage((prev) => prev + 1),
     disabled: !!isError,
   });
@@ -105,6 +107,7 @@ export const Parties = (): ReactElement => {
           <Autocomplete<Broker | string>
             value={selectedBroker}
             onChange={(event, newValue) => {
+              // The only value that is a string is the "Add manually" option
               if (typeof newValue === "string") {
                 setOpen(true);
                 return;
@@ -151,10 +154,11 @@ export const Parties = (): ReactElement => {
               // Filtering is handled on the backend side
               return options;
             }}
+            // The reference for the infinite scroll is put on the "Add manually" option
             renderOption={(props, option) => (
               <React.Fragment key={typeof option === "string" ? option : option.name}>
                 <li {...props} ref={typeof option === "string" ? sentryRef : undefined}>
-                  <Box sx={{ width: "100%" }}>
+                  <Box>
                     {typeof option === "string" ? (
                       <>
                         {t("MANAGING_BROKER_AUTOCOMPLETE_ADD_TEXT") + " "}
@@ -170,6 +174,7 @@ export const Parties = (): ReactElement => {
             )}
             onFocus={() => setAutocompleteFocus(true)}
             onBlur={() => setAutocompleteFocus(false)}
+            // We close the dropdown when there is no search, an error, or a broker is selected
             open={!!debouncedSearch && !!search && selectedBroker === null && autocompleteFocus && !isError}
             isOptionEqualToValue={(option, value) =>
               typeof option === "string" || typeof value === "string" ? option === value : option.id === value.id

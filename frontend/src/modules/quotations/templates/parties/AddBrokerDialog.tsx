@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Broker } from ".";
-import { useTranslation } from "react-i18next";
 
 interface AddBrokerDialogProps {
   open: boolean;
@@ -30,7 +30,6 @@ export const AddBrokerDialog = ({ open, handleClose, handleSubmit }: AddBrokerDi
       }}
     >
       <DialogTitle>{t("MANAGING_BROKER_ADD_BROKER_DIALOG_TITLE")}</DialogTitle>
-
       <DialogContent>
         <TextFieldContainer>
           <TextField
