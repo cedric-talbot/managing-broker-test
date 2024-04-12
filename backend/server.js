@@ -34,7 +34,7 @@ app.get('/brokers', (req, res) => {
       data: {
         brokers: filteredBrokers.filter((_, index) => index >= (page - 1) * limit && index < page * limit)
       },
-      next: filteredBrokers.length > page * limit ? `/brokers?search=${search}&page=${parseInt(page)+1}&limit=${limit}` : undefined
+      next: filteredBrokers.length > page * limit ? `/brokers?search=${search}&page=${parseInt(page) + 1}&limit=${limit}` : undefined
     });
   });
 });
