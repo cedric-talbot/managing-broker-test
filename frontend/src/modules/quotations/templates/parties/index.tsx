@@ -145,7 +145,7 @@ export const Parties = (): ReactElement => {
           )}
           {selectedBroker !== null && (
             <>
-              <DataItem>
+              <DataItem id="managing-broker-address">
                 <Typography variant="caption" fontFamily="Montserrat" color="secondary">
                   {t("MANAGING_BROKER_ADDRESS")}
                 </Typography>
@@ -153,7 +153,7 @@ export const Parties = (): ReactElement => {
                   {selectedBroker.address + " - " + selectedBroker.city}
                 </Typography>
               </DataItem>
-              <DataItem>
+              <DataItem id="managing-broker-country">
                 <Typography variant="caption" fontFamily="Montserrat" color="secondary">
                   {t("MANAGING_BROKER_COUNTRY")}
                 </Typography>
@@ -161,10 +161,10 @@ export const Parties = (): ReactElement => {
                   {selectedBroker.country}
                 </Typography>
               </DataItem>
-              <DataItem>
+              <DataItem id="managing-broker-contact">
                 <TextField label={t("MANAGING_BROKER_CONTACT")} fullWidth />
               </DataItem>
-              <DataItem>
+              <DataItem id="managing-broker-commission">
                 <TextField
                   label={t("MANAGING_BROKER_COMMISSION")}
                   fullWidth

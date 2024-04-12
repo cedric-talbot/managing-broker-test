@@ -33,23 +33,47 @@ export const AddBrokerDialog = ({ open, handleClose, handleSubmit }: AddBrokerDi
 
       <DialogContent>
         <TextFieldContainer>
-          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_NAME")} name="name" />
+          <TextField
+            id="add-broker-name"
+            fullWidth
+            required
+            label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_NAME")}
+            name="name"
+          />
         </TextFieldContainer>
         <TextFieldContainer>
-          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_ADDRESS")} name="address" />
+          <TextField
+            id="add-broker-address"
+            fullWidth
+            required
+            label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_ADDRESS")}
+            name="address"
+          />
         </TextFieldContainer>
         <TextFieldContainer>
-          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_CITY")} name="city" />
+          <TextField
+            id="add-broker-city"
+            fullWidth
+            required
+            label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_CITY")}
+            name="city"
+          />
         </TextFieldContainer>
         <TextFieldContainer>
-          <TextField fullWidth required label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_COUNTRY")} name="country" />
+          <TextField
+            id="add-broker-country"
+            fullWidth
+            required
+            label={t("MANAGING_BROKER_ADD_BROKER_DIALOG_COUNTRY")}
+            name="country"
+          />
         </TextFieldContainer>
       </DialogContent>
       <DialogActions sx={{ padding: "8px 24px 24px" }}>
         <Button onClick={handleClose} color="secondary">
           {t("MANAGING_BROKER_ADD_BROKER_DIALOG_CANCEL_BUTTON")}
         </Button>
-        <Button variant="contained" type="submit" color="primary">
+        <Button id="add-broker-submit" variant="contained" type="submit" color="primary">
           {t("MANAGING_BROKER_ADD_BROKER_DIALOG_SUBMIT_BUTTON")}
         </Button>
       </DialogActions>

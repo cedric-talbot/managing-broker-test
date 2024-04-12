@@ -37,3 +37,21 @@ cd backend
 yarn install
 yarn start
 ```
+
+## Frontend
+
+### Start the frontend
+To start the frontend, run the following:
+```
+cd frontend
+yarn install
+yarn start
+```
+
+Note that you will need the backend to be running for the frontend to work as intended.
+
+### Cypress tests
+To run the cypress tests, you might need to install some requirements, please follow the [Cypress recommandations](https://docs.cypress.io/guides/getting-started/installing-cypress#Operating-System) if anything goes wrong.
+Then, start the frontend and run `yarn cypress run` in a second tab, or `yarn cypress open` to see the interactive version.
+
+Note that cypress does not need the backend to run.
